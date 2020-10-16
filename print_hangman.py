@@ -1,89 +1,113 @@
-def print_hangman(lifes_left):
-    if lifes_left == 9:
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print("Lifes left: ", lifes_left)
-    elif lifes_left == 8:
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print("____")
-        print("Lifes left: ", lifes_left)
-    elif lifes_left == 7:
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" | ")
-        print(" | ")
-        print("____")
-        print("Lifes left: ", lifes_left)
-    elif lifes_left == 6:
-        print(" ")
-        print("  ")
-        print("  ")
-        print(" | ")
-        print(" | ")
-        print("____")
-        print("Lifes left: ", lifes_left)
-    elif lifes_left == 5:
-        print(" _________")
-        print(" | ")
-        print(" | ")
-        print(" | ")
-        print(" | ")
-        print("____")
-        print("Lifes left: ", lifes_left)
-    elif lifes_left == 4:
-        print(" _________")
-        print(" |       |")
-        print(" | ")
-        print(" | ")
-        print(" | ")
-        print("____")
-        print("Lifes left: ", lifes_left)
-    elif lifes_left == 4:
-        print(" _________")
-        print(" |       |")
-        print(" |       O")
-        print(" | ")
-        print(" | ")
-        print("____")
-        print("Lifes left: ", lifes_left)
-    elif lifes_left == 3:
-        print(" _________")
-        print(" |       |")
-        print(" |       O")
-        print(" |       |")
-        print(" | ")
-        print("____")
-        print("Lifes left: ", lifes_left)
-    elif lifes_left == 2:
-        print(" _________")
-        print(" |       |")
-        print(" |       O")
-        print(" |      /|\\")
-        print(" | ")
-        print("____")
-        print("Lifes left: ", lifes_left)
-    elif lifes_left == 1:
-        print(" _________")
-        print(" |       |")
-        print(" |       O")
-        print(" |      /|\\")
-        print(" |      / ")
-        print("____")
-        print("Lifes left: ", lifes_left)
+def print_hangman(lives) -> str:
+    if lives == 8:
+        print(f"""
+   
+    | 
+    |
+    |
+    |
+    |
+    |
+    | ____
+    """)
+    elif lives == 7:
+        print(f"""
+   ____
+    | /
+    |
+    |
+    |
+    |
+    |
+    | ____
+    """)
+    elif lives == 6:
+        print(f"""
+   ________
+    |/   |      
+    |              
+    |                
+    |                 
+    |               
+    |                   
+    |___      
+    """)
+    elif lives == 5:
+        print(f"""
+   ________       
+    |/   |              
+    |   (_)
+    |                         
+    |                       
+    |                         
+    |                          
+    |___     
+    """)
+    elif lives == 4:
+        print(f"""
+   ________               
+    |/   |                   
+    |   (_)                  
+    |    |                     
+    |    |                    
+    |                           
+    |                            
+    |___       
+    """)
+    elif lives == 3:
+        print(f"""
+   ________             
+    |/   |               
+    |   (_)                   
+    |   /|                     
+    |    |                    
+    |                        
+    |                          
+    |___      
+    """)
+    elif lives == 2:
+        print(f"""
+   ________              
+    |/   |                     
+    |   (_)                     
+    |   /|\         
+    |    |                       
+    |                             
+    |                            
+    |___       
+    """)
+    elif lives == 1:
+        print(f"""
+   ________                  
+    |/   |                         
+    |   (_)                      
+    |   /|\         
+    |    |                          
+    |   /                            
+    |                                  
+    |___    
+    """)
     else:
-        print(" _________")
-        print(" |       |")
-        print(" |       O")
-        print(" |      /|\\")
-        print(" |      / \\")
-        print("____")
-        print("********************\n--== GAME OVER ==--\n********************")
+        print(f"""
+    GAME OVER
+   ________
+    |/   |     
+    |   (_)    
+    |   /|\       
+    |    |        
+    |   / \       
+    |               
+    |___      
+    """)
+    return  f"    Lives: {lives}"
+def get_logo():
+    print(""" 
+  _    _                                         
+ | |  | |                                        
+ | |__| | __ _ _ __   __ _ _ __ ___   __ _ _ __  
+ |  __  |/ _` | '_ \ / _` | '_ ` _ \ / _` | '_ \\ 
+ | |  | | (_| | | | | (_| | | | | | | (_| | | | |
+ |_|  |_|\__,_|_| |_|\__, |_| |_| |_|\__,_|_| |_|
+                      __/ |                      
+                     |___/                       
+""")

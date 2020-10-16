@@ -1,118 +1,134 @@
-import random, os, sys
-from print_hangman import print_hangman
+import os
+import sys
+import random
+from typing import List
+from print_hangman import *
 
-words_file_path = "countries-and-capitals.txt"
+''' Ustala scieżke relatywną '''
+def get_file_path(file_name):
+    return os.path.join(os.getcwd(), file_name)
 
-def clear():
-    return os.system("cls || clear")
 
-def close():
-    clear()
-    return sys.exit("Thanks for playing!\n See you again!")
-
-def random_word_from_file(file_path):
-    list_of_words = list()
-    with open(file_path) as words:
-        for line in words:
-            list_of_words.append(line.replace("\n", ""))
-    return random.choice(list_of_words)
-
-def choose_difficulty(message, mininum, maximum):
-    dif_lvl= 0
-    while dif_lvl == 0:
-        try:
-            clear()
-            dif_lvl = int(input("Choose your {} ( {} - {} ) \n".format(message, mininum, maximum)))
-            if dif_lvl < mininum or dif_lvl > maximum:
-                dif_lvl = 0
-        except:
-            continue
-    return dif_lvl
-
-def choose_word(length_level):
-    choosen_word = random_word_from_file(words_file_path)
-    if length_level == 1:
-        while len(choosen_word) > 5:
-            choosen_word = random_word_from_file(words_file_path)
-        return choosen_word
-    elif length_level == 2:
-        while len(choosen_word) < 6 and len(choosen_word) > 8:
-            choosen_word = random_word_from_file(words_file_path)
-        return choosen_word
-    else:
-        while len(choosen_word) < 9:
-            choosen_word = random_word_from_file(words_file_path)
-        return choosen_word
-
-def winning(word):
-    clear()
-    print("{}\n********************\n--== YOU WIN ==--\n********************".format(" ".join(word)))
-    lifes = 0
-    win = True
-    return lifes, win
-
-def play(word, lifes):
-    guess_table = list()
-    word_tmp = word.copy()
-    user_tries = set()
-
-    win = False
-    
-    for i in word:
-        guess_table.append("_")
-    
-    while lifes > 0:
-        clear()
-        if guess_table == word:
-            lifes, win = winning(word)
-            continue
-        print_hangman(lifes)
-        print(" ".join(guess_table))
-        print(word)
-        if len(user_tries) > 0:
-            print("Already tried letters - {}".format(", ".join(user_tries)))
-        user_letter = input("Type a letter ('quit' to close): ")
-        if user_letter.lower() == "quit":
-            close()
-        elif user_letter.capitalize() == "".join(word):
-            lifes, win = winning(word)
-            continue
-        elif user_letter.lower() in word or user_letter.upper() in word:
-            for i in word_tmp:
-                cur_index = word_tmp.index(i)
-                if cur_index == 0 and word_tmp[cur_index].casefold() == user_letter.casefold():
-                    guess_table[cur_index] = user_letter.upper()  
-                    word_tmp[cur_index] = "12@^t1gW"
-                    user_tries.add(user_letter.lower())      
-                elif word_tmp[cur_index] == user_letter.casefold():
-                    guess_table[cur_index] = user_letter.lower()
-                    word_tmp[cur_index] = "12@^t1gW"
-                    user_tries.add(user_letter.lower())  
-                else:
-                    continue
-        else:
-            if user_letter in user_tries:
-                continue
-            lifes -= 1
-            user_tries.add(user_letter.lower())
-
-    if lifes == 0 and win == False:
-        clear()
-        print_hangman(lifes)
-
-def main():
-    lifes = choose_difficulty("amount of lifes", 3, 9)
-    length_lvl = choose_difficulty("word length level", 1, 3)
-    word = list()
-    word[:0] = choose_word(length_lvl)
-
-    play(word, lifes)
-
-if __name__ == "__main__":
+''' Użytkownik wybiera ilość żyć z przedziału 3-8, funkcja w pętli do właściwego wyboru, lub 0 aby wyjść '''
+def choose_lives() -> int:
     while True:
-        main()
-        play_again = input("Do you want to play again? Y / N    ")
-        if play_again.upper() == "Y":
+        try:
+            user_life = int(input("Choose lives level (3-8), or 0 to quit:\n-->  "))
+            if 3 <= user_life <= 8:
+                return user_life
+            elif user_life == 0:
+                sys.exit("Thanks for playing!\n See you again!")
+        except ValueError:
+            os.system("clear || cls")
+            get_logo()
             continue
+
+''' Otwiera plik txt z nazwami państw i stolic, tworzy listę stringów '''
+def get_list_of_words_from_file(path) -> List[str]:
+    with open(path) as words:
+        return [line.replace("\n", "") for line in words]
+
+'''
+Użytkownik wybiera poziom trudności w zależności od długości słów,  
+na podstawie wyboru losuje jeden str, który będzie słowem do odgadnięcia
+'''
+def get_random_word_from_list() -> str:
+    get_logo()
+    input_ranges = {'1': (1, 4), '2': (5, 9), '3': (9, 16)}
+    words = get_list_of_words_from_file(get_file_path('countries-and-capitals.txt'))
+    while True:
+        try:
+            user_level = input("Choose word level between 1-3\n1. up to 4 letters\n2. 5-8 letters\n3. 9-16 letters\nor 0 to quit:\n--> ")
+            if user_level == "0":
+                sys.exit("Thanks for playing!\n See you again!")
+            min_letters, max_letters = input_ranges[user_level]
+            words_with_chosen_criteria = [word for word in words if min_letters <= len(word) <= max_letters]
+            return random.choice(words_with_chosen_criteria)
+        except KeyError:
+            os.system("clear || cls")
+            get_logo()
+
+'''
+Funkcja po zakończeniu rundy, niezależnie czy była wygrana, pyta użytkownika czy chce grać dalej, 
+czy czy chce wyjść z programu.
+'''
+def play_again() -> None:
+    ask_user = input("Do you want to play again? Y / N ")
+    if ask_user.upper() == "Y":
+        os.system("clear || cls")
+        play(word=get_random_word_from_list(), lives=choose_lives())
+    else:
+        sys.exit("Thanks for playing!\n See you again!")
+
+'''
+Główna funkcja gry, użytkownik odgaduje literę bądź słowo:
+- zakrywa losowe słowo do odgadnięcia
+- drukuje liczbę żyć; próbowane litery bądź słowa, informacje o wygranej bądź przegranej
+- wyjście za pomocą str ‘quit’,
+- powiększa pierwszą literę w losowym str , jeśli użytkownik wpisze poprawnie cały
+- zastępuje zakryte litery, trafionymi przez użytkownika 
+'''
+def play(word: str, lives: int) -> None:
+    os.system("clear || cls")
+    print(word)
+    word_complete = "_" * len(word)
+    win = False
+    tried_letters = []
+    print(f"{word} - for testing")  # for testing
+    print(f"Lets play!\nTo exit game type: quit")
+    print(print_hangman(lives))
+    print(word_complete)
+
+    while not win and lives > 0:
+        user_input = input(f"\nGuess letter or word: ")
+        user_input = user_input.lower()
+        os.system("clear || cls")
+
+        if user_input == "quit":
+            sys.exit("Thanks for playing!\n See you again!")
+
+        if user_input.capitalize() == word:
+            win = True
+            break
+
+        if user_input in tried_letters:
+            print(f"You have already tired: '{user_input}'")
+
+        elif user_input not in word.lower():
+            print(f"Sorry - '{user_input}' - is not in the word")
+            lives -= 1
+            tried_letters.append(user_input)
+
         else:
-            close()
+            print(f"Great - '{user_input}' - is in the word")
+            tried_letters.append(user_input)
+
+            for letter in range(len(word)):
+                if word[letter].lower() == user_input.lower():
+                    word_complete = f"{word_complete[:letter]}{word[letter]}{word_complete[letter + 1:]}"
+
+            if "_" not in word_complete:
+                win = True
+
+        print(print_hangman(lives))
+        print(f"Tried: {tried_letters}")
+        print("To exit game type: quit")
+        print(word_complete)
+
+    if win:
+        result = "WON!"
+    else:
+        result = "LOST!"
+
+    os.system("clear || cls")
+    print(print_hangman(lives))
+    print(f"********************\n--== YOU {result} ==--\nThe word is: {word}\n********************")
+    play_again()
+
+
+if __name__ == '__main__':
+    while True:
+        os.system("clear || cls")
+        word = get_random_word_from_list()
+        lives = choose_lives()
+        play(word=word, lives=lives)
