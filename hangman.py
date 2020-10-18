@@ -72,12 +72,15 @@ def play(word: str, lives: int) -> None:
     os.system("clear || cls")
     print(word)
     word_complete = "_" * len(word)
+    print_word_complete = []
+    for letter in word_complete:
+        print_word_complete.append("_")
     win = False
     tried_letters = []
     print(f"{word} - for testing")  # for testing
     print(f"Lets play!\nTo exit game type: quit")
     print(print_hangman(lives))
-    print(word_complete)
+    print(" ".join(print_word_complete))
 
     while not win and lives > 0:
         user_input = input(f"\nGuess letter or word: ")
@@ -113,7 +116,10 @@ def play(word: str, lives: int) -> None:
         print(print_hangman(lives))
         print(f"Tried: {tried_letters}")
         print("To exit game type: quit")
-        print(word_complete)
+        print_word = []
+        for letter in word_complete:
+            print_word.append(letter)
+        print(" ".join(print_word))
 
     if win:
         result = "WON!"
